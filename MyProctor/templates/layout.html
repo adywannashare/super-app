@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Hillproctor.ai</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="120x120" href="{{ url_for('static', filename='assets/img/favicon/apple-touch-icon.png') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='assets/img/favicon/favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='assets/img/favicon/favicon-16x16.png') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='assets/img/favicon/site.webmanifest') }}">
+  <link rel="mask-icon" color="#ffffff" href="{{ url_for('static', filename='assets/img/favicon/safari-pinned-tab.svg') }}">
+
+  <!-- Custom Pixel CSS -->
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/pixel.css') }}">
+
+  {% block head %}{% endblock %}
+</head>
+
+<body>
+  {% include 'includes/_navbar.html' %}
+  {% include 'includes/_messages.html' %}
+  {% block body %}{% endblock %}
+
+  <!-- jQuery + Bootstrap Bundle -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  <!-- SweetAlert2 -->
+  <script src="{{ url_for('static', filename='js/sweetalert2.all.min.js') }}"></script>
+  
+  <!-- PrismJS -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  
+  <script src="{{ url_for('static', filename='js/pixel.js') }}"></script>
+ 
+
+  <!-- Footer -->
+  <footer id="sticky-footer" class="py-4">
+    <div class="d-flex text-center justify-content-center align-items-center" role="contentinfo">
+      <p class="font-weight-bold font-medium mb-0">Copyright © Hillproctor.ai
+        <span class="current-year"><script>document.write(new Date().getFullYear())</script></span>. All rights reserved.
+      </p>
+    </div><br>
+    <div class="d-flex text-center justify-content-center align-items-center" role="contentinfo">
+      <p class="font-weight-bold font-small mb-0">
+        <span><a href="https://www.narenderkeswani.com/">Made with ❤️ By Mayank, Adarsh, Harshita, Mohit</a></span>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
