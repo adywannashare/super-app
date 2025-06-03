@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" >
+
+    <title>Course Recommendation | Home</title>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Course Recommendation System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <main role="main">
+
+
+
+<!--         <section class="jumbotron text-center">
+            <div class="container">
+                <h4 class="jumbotron-heading">Enter The Name of the Course for Recommendations</h4>
+                <div class="form-floating my-4">
+                    <form action="/" method="POST">
+                        <div class="mb-3">
+                            <input name="course" type="text" class="form-control" id="course">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Recommend</button>
+                    </form>
+                </div>
+                {% if showtitle%} 
+                    <h4 class="jumbotron-heading">Recommendations for Course <span style = "color: red; font-size:1.5rem;">"{{coursename}}"</span> are shown below</h4>
+                {%endif%}
+            </div>
+        </section> -->
+        <section class="jumbotron text-center">
+            <div class="container">
+                <h4 class="jumbotron-heading">Enter The Name of the Course for Recommendations</h4>
+                <div class="form-floating my-4">
+                    <form id="recommendForm" action="/" method="POST" onsubmit="return validateInput()">
+                        <div class="mb-3">
+                            <!-- Added onkeyup event to trigger both spellcheck and capitalization -->
+                            <input name="course" type="text" class="form-control" id="course" onkeyup="checkSpelling(); capitalizeFirstLetter()" placeholder="Type a course name">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Recommend</button>
+                    </form>
+                </div>
+                <!-- Displaying suggestions or warnings dynamically -->
+                <div id="spellcheck-warning" style="color: red; font-size: 0.9rem; font-style: italic;"></div>
+        
+                {% if showtitle %}
+                    <h4 class="jumbotron-heading">Recommendations for Course <span style="color: red; font-size: 1.5rem;">"{{coursename}}"</span> are shown below</h4>
+                {% endif %}
+            </div>
+        </section>
+        
+  
+        
+        
+        <div class="album py-5 bg-light">
+            <div class="container">
+
+            {%if showerror%}
+                <div class="card text-center">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">Special title treatment</h5>
+                        <p class="card-text">Seems Like the Course for {{coursename}} is not available currently,we'll report it to the Course Administrator for uploading the course :)</p>
+                        <a href="/" class="btn btn-primary">Home Page</a>
+                    </div>
+               
+                </div>
+
+
+            {%endif%}
+
+                <div class="row">
+                
+                {%for course in coursemap%}
+  
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+
+                            <div class="card-body bg-dark">
+                                <p class="card-text" style = "color:white;">{{course}}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                         <a href="{{coursemap[course]}}" target = "_blank" class="btn btn-outline-danger" style =  "color: white;">View Course</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {%endfor%}
+
+                  
+
+
+                </div>
+                
+            </div>
+        </div>
+
+    </main>
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+// Function to check spelling and provide suggestions using Datamuse API
+async function checkSpelling() {
+    const input = document.getElementById("course").value.trim();
+    const warningDiv = document.getElementById("spellcheck-warning");
+
+    if (input.length === 0) {
+        warningDiv.textContent = ""; // Clear warning if input is empty
+        return;
+    }
+
+    try {
+        // Fetch suggestions from Datamuse API
+        const response = await fetch(`https://api.datamuse.com/words?sp=${input}`);
+        const suggestions = await response.json();
+
+        if (suggestions.length > 0) {
+            const closestWords = suggestions.slice(0, 5).map((item) => item.word); // Take top 5 suggestions
+            warningDiv.innerHTML = `Did you mean: ${closestWords.join(", ")}?`;
+        } else {
+            warningDiv.textContent = "No suggestions available.";
+        }
+    } catch (error) {
+        console.error("Error fetching suggestions:", error);
+        warningDiv.textContent = "Error checking spelling.";
+    }
+}
+
+// Function to capitalize the first letter of the input as the user types
+function capitalizeFirstLetter() {
+    const inputField = document.getElementById("course");
+    const currentValue = inputField.value;
+
+    if (currentValue.length > 0) {
+        // Capitalize first letter, keep the rest as is
+        inputField.value = currentValue.charAt(0).toUpperCase() + currentValue.slice(1);
+    }
+}
+// Form validation function to enforce input constraints
+function validateInput() {
+    const input = document.getElementById("course").value.trim();
+    const warningDiv = document.getElementById("spellcheck-warning");
+
+    // Rule 1: Input should not be empty
+    if (input === "") {
+        warningDiv.textContent = "Course name cannot be empty!";
+        return false;
+    }
+
+    // Rule 2: Only letters, spaces, and numbers (numbers allowed after text, but not after spaces)
+    const regex = /^[a-zA-Z]+[a-zA-Z0-9]*$/;
+
+    // Rule 3: Validate input against the regular expression
+    // This regex allows the input to:
+    // - Start with letters (a-zA-Z)
+    // - Allow letters and numbers after the first part
+    // - No special characters except spaces
+    // - Numbers cannot be after spaces
+    if (!regex.test(input)) {
+        warningDiv.textContent = "Invalid input! No special characters except spaces. Numbers can follow text but not after spaces.";
+        return false;
+    }
+
+    // Clear warning if input is valid
+    warningDiv.textContent = "";
+    return true;
+}
+
+// Function to handle the capitalization of the first letter
+function capitalizeFirstLetter() {
+    const inputField = document.getElementById("course");
+    const currentValue = inputField.value;
+
+    if (currentValue.length > 0) {
+        // Capitalize the first letter of the input
+        inputField.value = currentValue.charAt(0).toUpperCase() + currentValue.slice(1);
+    }
+}
+
+    </script>
+</body>
+
+</html>
